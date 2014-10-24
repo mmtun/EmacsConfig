@@ -108,7 +108,7 @@ Emacs上有不少Theme。可以到 [Emacs
 Themes](http://emacsthemes.caisah.info)
 看看，基本上符合Emacs2.4的Theme都有抓图可以预览效果。
 
-``` {.commonlisp}
+``` {.Emacs-lisp}
 (when window-system (load-theme 'molokai t))
 ```
 
