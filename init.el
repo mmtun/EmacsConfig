@@ -1,0 +1,5 @@
+(require 'org)
+(require 'ob-tangle)
+(defvar maisui-dir (file-name-directory load-file-name)
+  "init.el文件所在目录作为所有配置文件的默认存储位置" )
+(org-babel-load-file (expand-file-name "Maimantun.org" maisui-dir))
