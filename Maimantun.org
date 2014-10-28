@@ -6,7 +6,7 @@
 #+begin_src emacs-lisp
 (require 'package)
 (add-to-list 'package-archives 
-             '("melpa" . "http://melpa.milkbox.net/packages/"))
+             '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
 #+end_src
 
@@ -24,6 +24,7 @@
 
 ;; 设置默认换行模式为“在窗口边缘自动换行”
 (toggle-truncate-lines t)
+
 #+end_src
 
 ** Emacs外观设置
