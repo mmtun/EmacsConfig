@@ -13,18 +13,26 @@
 * Emacs通用设置
 ** 编辑器默认行为设置
 
+设置Eamcs在各种编辑场景下都需要激活的特性。具体包括：
+  * Tab键宽度、
+  * 设置显示行号、
+  * 默认在窗口边缘换行、
+  * 光标高亮当前行。
+
 #+begin_src emacs-lisp
 ;; 设置tab space
 (setq tab-width 4)
 
 ;; 设置自动显示行号
 ;;(setq linum-format "%4d \u2502") ;;设置行号显示模式，行号边缘添加竖线
-(setq linum-format "%04d ") ;;设置行号显示格
+(setq linum-format "%4d ") ;;设置行号显示格
 (global-linum-mode t)
 
 ;; 设置默认换行模式为“在窗口边缘自动换行”
 (toggle-truncate-lines t)
 
+;; 高亮光标的当前行
+(global-hl-line-mode 1)
 #+end_src
 
 ** Emacs外观设置
@@ -32,6 +40,9 @@
 
 Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使用中文和英文混排时表格可以对齐，需要对Emacs中的字体进行相应的设置。
 
+**** 等宽字体设置
+set-font函数是设置等宽字体的函数。（但是不等高）
+qq   
 定义字体设置函数。
 #+begin_src emacs-lisp
 (require 'cl)
@@ -50,6 +61,9 @@ Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使�
 
 在Windows环境下，目前发现可以实现良好显示的中英文字体及大小搭配为：
 
+ahhaha
+好好好
+
 | English Font name       | Size | Chinese Font Name        | Size |
 |-------------------------+------+--------------------------+------|
 | Consolas                |   14 | Microsoft Yahei          |   16 |
@@ -57,6 +71,14 @@ Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使�
 | DejaVu Sans Mono        |   16 | WenQuanyi Micro Hei Mono |   20 |
 | Yahei Mono              |   16 | Yahei Mono               |   16 |
 | Dejavu Sans YuanTi Mono |   14 | DejaVu Sans YuanTi Mono  |   16 |
+
+测试中文的字体等宽设计
+
+| English | 中文                     |
+|---------+--------------------------|
+| 目前的 | 不够等宽             |
+| English | 不是所有的页面都可以这样 |
+|         |                          |
 
 #+begin_src emacs-lisp
 (case system-type
@@ -66,13 +88,126 @@ Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使�
    ;(set-font "monofur" "WenQuanyi Micro Hei Mono" 16 16)
   )
   ( windows-nt
-     (set-font "Consolas" "Microsoft Yahei" 14 14))
+
+     ;(set-font "Consolas" "Microsoft Yahei" 14 14)
+     (set-face-attribute 'default nil :font "Consolas-10") 
+     (dolist (charset '(kana han symbol cjk-misc bopomofo))
+         (set-fontset-font  (frame-parameter nil 'font) charset
+                      (font-spec :family "Microsoft Yahei")))
+     (setq face-font-rescale-alist '("Microsoft Yahei" . 1.2))
+  )
 )
+#+end_src
+
+**** 等高字体设置
+
+从这里[fn:1]看到了将字体设置为等高和等宽的方法。在我的设置中也可以尝试一下。 
+
+#+begin_src 
+(defun qiang-font-existsp (font)
+  (if (null (x-list-fonts font))
+      nil t))
+
+(defun qiang-make-font-string (font-name font-size)
+  (if (and (stringp font-size)
+           (equal ":" (string (elt font-size 0))))
+      (format "%s%s" font-name font-size)
+    (format "%s-%s" font-name font-size)))
+
+(defvar bhj-english-font-size nil)
+(defun qiang-set-font (english-fonts
+                       english-font-size
+                       chinese-fonts
+                       &optional chinese-fonts-scale
+                       )
+  (setq chinese-fonts-scale (or chinese-fonts-scale 1.2))
+  (save-excursion
+    (with-current-buffer (find-file-noselect "~/.config/emacs-font-size")
+      (delete-region (point-min) (point-max))
+      (insert (format "%s" english-font-size))
+      (save-buffer)
+      (kill-buffer)))
+  (setq face-font-rescale-alist `(("Microsoft Yahei" . ,chinese-fonts-scale)
+                                  ("Microsoft_Yahei" . ,chinese-fonts-scale)
+                                  ("微软雅黑" . ,chinese-fonts-scale)
+                                  ("WenQuanYi Zen Hei" . ,chinese-fonts-scale)))
+  "english-font-size could be set to \":pixelsize=18\" or a integer.
+If set/leave chinese-font-size to nil, it will follow english-font-size"
+  (require 'cl)                         ; for find if
+  (setq bhj-english-font-size english-font-size)
+  (let ((en-font (qiang-make-font-string
+                  (find-if #'qiang-font-existsp english-fonts)
+                  english-font-size))
+        (zh-font (font-spec :family (find-if #'qiang-font-existsp chinese-fonts))))
+
+    ;; Set the default English font
+    ;;
+    ;; The following 2 method cannot make the font settig work in new frames.
+    ;; (set-default-font "Consolas:pixelsize=18")
+    ;; (add-to-list 'default-frame-alist '(font . "Consolas:pixelsize=18"))
+    ;; We have to use set-face-attribute
+    (set-face-attribute
+     'default nil :font en-font)
+    (set-face-font 'italic (font-spec :family "Courier New" :slant 'italic :weight 'normal :size (+ 0.0 english-font-size)))
+    (set-face-font 'bold-italic (font-spec :family "Courier New" :slant 'italic :weight 'bold :size (+ 0.0 english-font-size)))
+
+    (set-fontset-font t 'symbol (font-spec :family "Courier New"))
+    (set-fontset-font t nil (font-spec :family "DejaVu Sans"))
+
+    ;; Set Chinese font
+    ;; Do not use 'unicode charset, it will cause the english font setting invalid
+    (dolist (charset '(kana han cjk-misc bopomofo))
+      (set-fontset-font t charset zh-font))))
+
+
+(defvar bhj-english-fonts '("Monaco" "Consolas" "DejaVu Sans Mono" "Monospace" "Courier New"))
+(defvar bhj-chinese-fonts '("Microsoft Yahei" "Microsoft_Yahei" "微软雅黑" "文泉驿等宽微米黑" "黑体" "新宋体" "宋体"))
+
+(qiang-set-font
+ bhj-english-fonts
+ (if (file-exists-p "~/.config/emacs-font-size")
+     (save-excursion
+       (find-file "~/.config/emacs-font-size")
+       (goto-char (point-min))
+       (let ((monaco-font-size (read (current-buffer))))
+         (kill-buffer (current-buffer))
+         monaco-font-size))
+   12.5)
+ bhj-chinese-fonts)
+
+(defvar chinese-font-size-scale-alist nil)
+
+;; On different platforms, I need to set different scaling rate for
+;; differnt font size.
+(cond
+ ((and (boundp '*is-a-mac*) *is-a-mac*)
+  (setq chinese-font-size-scale-alist '((10.5 . 1.3) (11.5 . 1.3) (16 . 1.3) (18 . 1.25))))
+ ((and (boundp '*is-a-win*) *is-a-win*)
+  (setq chinese-font-size-scale-alist '((11.5 . 1.25) (16 . 1.25))))
+ (t ;; is a linux:-)
+  (setq chinese-font-size-scale-alist '((16 . 1.25)))))
+
+(defvar bhj-english-font-size-steps '(9 10.5 11.5 12.5 14 16 18 20 22))
+(defun bhj-step-frame-font-size (step)
+  (let ((steps bhj-english-font-size-steps)
+        next-size)
+    (when (< step 0)
+        (setq steps (reverse bhj-english-font-size-steps)))
+    (setq next-size
+          (cadr (member bhj-english-font-size steps)))
+    (when next-size
+        (qiang-set-font bhj-english-fonts next-size bhj-chinese-fonts (cdr (assoc next-size chinese-font-size-scale-alist)))
+        (message "Your font size is set to %.1f" next-size))))
+
+(global-set-key [(control x) (meta -)] (lambda () (interactive) (bhj-step-frame-font-size -1)))
+(global-set-key [(control x) (meta +)] (lambda () (interactive) (bhj-step-frame-font-size 1)))
+
+(set-face-attribute 'default nil :font (font-spec))
 #+end_src
 
 *** Eamcs界面元素显示状态
 
-Eamcs运行时我不想让工具条、滚动条和菜单条显示出来，所以关掉。
+Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
 #+begin_src emacs-lisp
 (when (string-equal system-type "windows-nt")
   "在Windows环境中关闭菜单条"
@@ -80,7 +215,7 @@ Eamcs运行时我不想让工具条、滚动条和菜单条显示出来，所以
 ;; 关闭工具条
 (tool-bar-mode -1)
 ;; 关闭滚动条
-(scroll-bar-mode -1)
+;;(scroll-bar-mode -1)
 #+end_src
 
 启动时显示启动信息没有用，关闭之。
@@ -99,7 +234,7 @@ Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Theme
 
 #+begin_src emacs-lisp
 ;(when window-system (load-theme 'molokai t))
-(load-theme 'molokai t)
+(load-theme 'flatui t)
 #+end_src
 
   Trust all themes.
@@ -110,6 +245,7 @@ Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Theme
 ** 文件编码
 
 设置Emacs的默认编码集。考虑到跨操作系统使用Emacs配置文件的需求，使用utf-8作为主要文件编码。
+
 #+begin_src emacs-lisp
 (case system-type
   (windows-nt
@@ -121,3 +257,4 @@ Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Theme
 #+end_src
 * 附录
 
+[fn:1] http://baohaojun.github.io/blog/2012/12/19/perfect-emacs-chinese-font.html
