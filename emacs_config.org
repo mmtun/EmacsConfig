@@ -42,7 +42,7 @@ Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使�
 
 **** 等宽字体设置
 set-font函数是设置等宽字体的函数。（但是不等高）
-qq   
+
 定义字体设置函数。
 #+begin_src emacs-lisp
 (require 'cl)
@@ -76,7 +76,7 @@ ahhaha
 
 | English | 中文                     |
 |---------+--------------------------|
-| 目前的 | 不够等宽             |
+| 目前的  | 不够等宽                 |
 | English | 不是所有的页面都可以这样 |
 |         |                          |
 
@@ -89,12 +89,12 @@ ahhaha
   )
   ( windows-nt
 
-     ;(set-font "Consolas" "Microsoft Yahei" 14 14)
-     (set-face-attribute 'default nil :font "Consolas-10") 
-     (dolist (charset '(kana han symbol cjk-misc bopomofo))
-         (set-fontset-font  (frame-parameter nil 'font) charset
-                      (font-spec :family "Microsoft Yahei")))
-     (setq face-font-rescale-alist '("Microsoft Yahei" . 1.2))
+     (set-font "Consolas" "Microsoft Yahei" 14 16)
+     ;(set-face-attribute 'default nil :font "Consolas-14") 
+     ;(dolist (charset '(kana han symbol cjk-misc bopomofo))
+     ;    (set-fontset-font  (frame-parameter nil 'font) charset
+     ;                 (font-spec :family "Microsoft Yahei")))
+     ;(setq face-font-rescale-alist '("Microsoft Yahei" . 1.2))
   )
 )
 #+end_src
