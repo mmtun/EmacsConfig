@@ -1,4 +1,6 @@
-#TITLE: 麦东的Emacs配置文件
+#+TITLE: Emacs配置文件
+#+AUTHOR: 张晓京
+#+STARTUP: content 
 
 * Emacs的组件
 ** 添加package源
@@ -61,9 +63,6 @@ set-font函数是设置等宽字体的函数。（但是不等高）
 
 在Windows环境下，目前发现可以实现良好显示的中英文字体及大小搭配为：
 
-ahhaha
-好好好
-
 | English Font name       | Size | Chinese Font Name        | Size |
 |-------------------------+------+--------------------------+------|
 | Consolas                |   14 | Microsoft Yahei          |   16 |
@@ -74,13 +73,13 @@ ahhaha
 
 测试中文的字体等宽设计
 
-| English | 中文                     |
-|---------+--------------------------|
-| 目前的  | 不够等宽                 |
-| English | 不是所有的页面都可以这样 |
-|         |                          |
+| English             | 中文                                   |
+|---------------------+----------------------------------------|
+| 目前的              | 不够等宽                               |
+| English             | 不是所有的页面都可以这样               |
+| 使用等高字体setting | 成功的解决了字体的缩放和表格对齐的问题 |
 
-#+begin_src emacs-lisp
+#+begin_src 
 (case system-type
   (gnu/linux
    (set-face-bold-p 'bold nil)
@@ -89,7 +88,7 @@ ahhaha
   )
   ( windows-nt
 
-     (set-font "Consolas" "Microsoft Yahei" 14 16)
+     (set-font "Consolas" "Microsoft Yahei" 14 14)
      ;(set-face-attribute 'default nil :font "Consolas-14") 
      ;(dolist (charset '(kana han symbol cjk-misc bopomofo))
      ;    (set-fontset-font  (frame-parameter nil 'font) charset
@@ -99,11 +98,13 @@ ahhaha
 )
 #+end_src
 
-**** 等高字体设置
+**** 等高字体的设置
 
-从这里[fn:1]看到了将字体设置为等高和等宽的方法。在我的设置中也可以尝试一下。 
+     好吧，等宽字体在使用的过程中会出现中英文字体缩放不同步的问题，所以，还是再重新试试看等高字体的设置（[[http://baohaojun.github.io/blog/2012/12/19/perfect-emacs-chinese-font.html][狠狠地折腾了一把Emacs中文字体]] ）。
 
-#+begin_src 
+     这套代码对于我来说还是太复杂了一些。有时间自己再改改。让代码更好用一些。
+
+     #+BEGIN_SRC emacs-lisp
 (defun qiang-font-existsp (font)
   (if (null (x-list-fonts font))
       nil t))
@@ -203,8 +204,8 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
 (global-set-key [(control x) (meta +)] (lambda () (interactive) (bhj-step-frame-font-size 1)))
 
 (set-face-attribute 'default nil :font (font-spec))
-#+end_src
-
+     
+     #+END_SRC
 *** Eamcs界面元素显示状态
 
 Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
@@ -234,7 +235,9 @@ Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Theme
 
 #+begin_src emacs-lisp
 ;(when window-system (load-theme 'molokai t))
-(load-theme 'flatui t)
+;(load-theme 'flatui t)
+(load-theme 'leuven t)
+
 #+end_src
 
   Trust all themes.
@@ -244,7 +247,7 @@ Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Theme
 * Emacs编辑功能设置
 ** 文件编码
 
-设置Emacs的默认编码集。考虑到跨操作系统使用Emacs配置文件的需求，使用utf-8作为主要文件编码。
+   设置Emacs的默认编码集。考虑到跨操作系统使用Emacs配置文件的需求，使用utf-8作为主要文件编码。
 
 #+begin_src emacs-lisp
 (case system-type
@@ -255,6 +258,73 @@ Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Theme
    (prefer-coding-system 'utf-8))
 )
 #+end_src
+
+   设置一些必要的快捷键绑定：
+   - 由于Windows上输入法切换键的限制，Contral-Space被占用了。所以添加Alt-Space的组合键作为标记。
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-SPC") 'set-mark)
+#+END_SRC
+
+* Pacakge 配置
+
+** EVIL
+
+   *暂时被停用*
+   Emacs有自己的一套键盘移动和编辑的快捷键。在键盘的移动方面，VIM的键盘移动要比Emacs简洁很多。所以，在我的配置文件中，打算启用VIM的编辑键盘模拟功能。
+   
+   为了降低“ESC”键的使用频率，使用key-chord实现组合按键对应功能的定制
+
+  * 问题：
+    - 使用VIM的控制方式，遇到了输入法的频繁切换的问题。估计只能“两害相权，取其轻”了。
+    - 使用EVIL只能在部分Buffer（嗯，是大部分），所以，使用Evil的时候感觉有一些轻微的“精神分裂”。要时刻记得“在Minibuffer”中不能使用VIM的操作方式移动光标。嗯，有人要纠正我这个问题吗？
+
+#+begin_src 
+(require 'evil)
+(evil-mode 1)
+(setq evil-default-cursor '(t))
+
+(key-chord-mode 1)
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-motion-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-visual-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-emacs-state-map "jk" 'evil-normal-state)
+#+end_src
+
+** org-mode
+
+设置ORG Mode下也能够实现自动换行。不过在使用表格的文档中，可能会由于自动换行而导致表格的错乱。这个等我实际遇到的时候再修改吧。
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook 
+   (lambda () (setq truncate-lines nil)))
+#+END_SRC
+
+** Markdown
+
+#+begin_src emacs-lisp
+ (autoload 'markdown-mode "markdown-mode"
+       "Major mode for editing Markdown files" t)
+    (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+    (add-to-list 'auto-mode-alist '("\\.mkd\\'" . markdown-mode))
+    (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+#+end_src
+
+** smex
+
+   一个让在Emacs中输入命令行也能够自动完成的插件，是一个在minibuffer中的ido
+
+#+BEGIN_SRC emacs-lisp
+;(require 'smex) ;not needed by using package.el
+(smex-initialize)
+
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+#+END_SRC
+
 * 附录
 
 [fn:1] http://baohaojun.github.io/blog/2012/12/19/perfect-emacs-chinese-font.html
+  
