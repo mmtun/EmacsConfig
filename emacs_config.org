@@ -357,7 +357,7 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
      (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
    #+END_SRC
 
-** qGPG
+** GPG
 
    在Emacs中使用加密工具GPG。同时配置Emacs使用minibuffer接收加密文档的密码。
 
@@ -375,25 +375,6 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
    #+END_SRC
 
    #+RESULTS:
-
-** Deft
-
-Deft是Emacs下一个快速浏览，检索文本文件的Major Mode。我使用它来管理我的Org文件列表。看看是否足够好用。
-
-感觉只能实现一些文本文件的索引功能，使用的地方还是比较少。现在不再使用了。
-
-#+BEGIN_SRC
-;(require 'deft) ;not needed by using package.el
-
-(setq deft-extension "org")
-(setq deft-text-mode 'org-mode)
-(setq deft-directory "D:/0--WORK/1--新业务开发/0--ProjectDocuments")
-
-;setting key binddings
-(global-set-key [f8] 'deft)
-
-#+END_SRC
-
 
 * 附录
 
