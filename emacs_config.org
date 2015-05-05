@@ -9,33 +9,35 @@
 (require 'package)
 (add-to-list 'package-archives 
              '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives 
+             '("org" . "http://orgmode.org/elpa/"))
 (package-initialize)
 #+end_src
 
 * Emacs通用设置
 ** 编辑器默认行为设置
 
-设置Eamcs在各种编辑场景下都需要激活的特性。具体包括：
-  * Tab键宽度、
-  * 设置显示行号、
-  * 默认在窗口边缘换行、
-  * 光标高亮当前行。
+   设置Eamcs在各种编辑场景下都需要激活的特性。具体包括：
+   * Tab键宽度、
+   * 设置显示行号、
+   * 默认在窗口边缘换行、
+   * 光标高亮当前行。
 
-#+begin_src emacs-lisp
-;; 设置tab space
-(setq tab-width 4)
+   #+begin_src emacs-lisp
+     ;; 设置tab space
+     (setq tab-width 4)
 
-;; 设置自动显示行号
-;;(setq linum-format "%4d \u2502") ;;设置行号显示模式，行号边缘添加竖线
-(setq linum-format "%4d ") ;;设置行号显示格
-(global-linum-mode t)
+     ;; 设置自动显示行号
+     ;;(setq linum-format "%4d \u2502") ;;设置行号显示模式，行号边缘添加竖线
+     (setq linum-format "%4d ") ;;设置行号显示格
+     (global-linum-mode t)
 
-;; 设置默认换行模式为“在窗口边缘自动换行”
-(toggle-truncate-lines t)
+     ;; 设置默认换行模式为“在窗口边缘自动换行”
+     (toggle-truncate-lines t)
 
-;; 高亮光标的当前行
-(global-hl-line-mode 1)
-#+end_src
+     ;; 高亮光标的当前行
+     (global-hl-line-mode 1)
+   #+end_src
 
 ** Emacs外观设置
 *** 字体设置
@@ -43,7 +45,8 @@
 Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使用中文和英文混排时表格可以对齐，需要对Emacs中的字体进行相应的设置。
 
 **** 等宽字体设置
-set-font函数是设置等宽字体的函数。（但是不等高）
+
+     set-font函数是设置等宽字体的函数。（但是不等高）
 
 定义字体设置函数。
 #+begin_src emacs-lisp
@@ -79,12 +82,12 @@ set-font函数是设置等宽字体的函数。（但是不等高）
 | English             | 不是所有的页面都可以这样               |
 | 使用等高字体setting | 成功的解决了字体的缩放和表格对齐的问题 |
 
-#+begin_src 
+#+begin_src emacs-lisp
 (case system-type
   (gnu/linux
    (set-face-bold-p 'bold nil)
    (set-face-underline-p 'bold nil)
-   ;(set-font "monofur" "WenQuanyi Micro Hei Mono" 16 16)
+   (set-font "monofur" "WenQuanyi Micro Hei Mono" 16 16)
   )
   ( windows-nt
 
@@ -104,7 +107,7 @@ set-font函数是设置等宽字体的函数。（但是不等高）
 
      这套代码对于我来说还是太复杂了一些。有时间自己再改改。让代码更好用一些。
 
-     #+BEGIN_SRC emacs-lisp
+     #+BEGIN_SRC 
 (defun qiang-font-existsp (font)
   (if (null (x-list-fonts font))
       nil t))
@@ -217,6 +220,8 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
 (tool-bar-mode -1)
 ;; 关闭滚动条
 ;;(scroll-bar-mode -1)
+;; 设置MiniBuffer的最小高度
+(setq resize-mini-window nil )
 #+end_src
 
 启动时显示启动信息没有用，关闭之。
@@ -231,16 +236,16 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
 
 *** Theme 设置
 
-Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Themes]] 看看，基本上符合Emacs2.4的Theme都有抓图可以预览效果。
+    Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Themes]] 看看，基本上符合Emacs2.4的Theme都有抓图可以预览效果。
 
 #+begin_src emacs-lisp
 ;(when window-system (load-theme 'molokai t))
-;(load-theme 'flatui t)
-(load-theme 'leuven t)
+(load-theme 'flatui t)
+;(load-theme 'leuven t)
 
 #+end_src
 
-  Trust all themes.
+    Trust all themes.
 #+begin_src emacs-lisp
 (setq custom-safe-themes t)
 #+end_src
@@ -268,61 +273,127 @@ Emacs上有不少Theme。可以到 [[http://emacsthemes.caisah.info][Emacs Theme
 
 * Pacakge 配置
 
-** EVIL
+** EVIL （FREEZED）
 
    *暂时被停用*
    Emacs有自己的一套键盘移动和编辑的快捷键。在键盘的移动方面，VIM的键盘移动要比Emacs简洁很多。所以，在我的配置文件中，打算启用VIM的编辑键盘模拟功能。
    
    为了降低“ESC”键的使用频率，使用key-chord实现组合按键对应功能的定制
 
-  * 问题：
+   * 问题：
     - 使用VIM的控制方式，遇到了输入法的频繁切换的问题。估计只能“两害相权，取其轻”了。
     - 使用EVIL只能在部分Buffer（嗯，是大部分），所以，使用Evil的时候感觉有一些轻微的“精神分裂”。要时刻记得“在Minibuffer”中不能使用VIM的操作方式移动光标。嗯，有人要纠正我这个问题吗？
 
-#+begin_src 
-(require 'evil)
-(evil-mode 1)
-(setq evil-default-cursor '(t))
+   #+begin_src
+     (require 'evil)
+     (evil-mode 1)
+     (setq evil-default-cursor '(t))
 
-(key-chord-mode 1)
-(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-(key-chord-define evil-motion-state-map "jk" 'evil-normal-state)
-(key-chord-define evil-visual-state-map "jk" 'evil-normal-state)
-(key-chord-define evil-emacs-state-map "jk" 'evil-normal-state)
-#+end_src
+     (key-chord-mode 1)
+     (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+     (key-chord-define evil-motion-state-map "jk" 'evil-normal-state)
+     (key-chord-define evil-visual-state-map "jk" 'evil-normal-state)
+     (key-chord-define evil-emacs-state-map "jk" 'evil-normal-state)
+   #+end_src
 
 ** org-mode
 
-设置ORG Mode下也能够实现自动换行。不过在使用表格的文档中，可能会由于自动换行而导致表格的错乱。这个等我实际遇到的时候再修改吧。
+*** org-mode配置说明
 
-#+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook 
-   (lambda () (setq truncate-lines nil)))
-#+END_SRC
+    下列配置内容在如下OrgMode版本中正常使用：
+    * 8.2.10
+
+*** 自动换行的设置
+
+    设置ORG Mode下也能够实现自动换行。不过在使用表格的文档中，可能会由于自动换行而导致表格的错乱。这个等我实际遇到的时候再修改吧。
+
+    #+BEGIN_SRC emacs-lisp
+      (add-hook 'org-mode-hook 
+         (lambda () (setq truncate-lines nil)))
+    #+END_SRC
+
+*** 配置Capture模板
+    设置OrgMode的Capture模板。这样可以
+    #+BEGIN_SRC emacs-lisp
+      (define-key global-map "\C-cc" 'org-capture)
+      (setq org-capture-templates
+            '(("b" "Journal(b)" entry (file+datetree "~/Journal/2015-BodyDiary.org.gpg")
+               "* %?\n输入于：%U\n %i\n")
+              ("t" "Taiji(t)" entry (file+datetree "~/Journal/2015-TaijiTraining.org.gpg")
+               "* %?\n输入于：%U\n %i\n")))
+    #+END_SRC
+
+*** 调整时间戳显示方式
+    在Ubuntu下默认的星期名仅显示一个中文的数字，我不喜欢。所以改动了Orgmode相应变量。由于这个常量并未开放给用户自定义使用，因此可能会于Orgmode的版本相关。目前看来，问题应该不大。相关变量的说明可以看Eamcs的变量手册 =describe-variable RET org-time-stamp-formats RET=
+
+    修改前：显示的时间戳为：<2015-04-30 四>
+    修改后：显示的时间戳为：<2015-04-30 星期四>
+
+    #+BEGIN_SRC emacs-lisp
+      (setq org-time-stamp-formats '("<%Y-%m-%d %A>" . "<%Y-%m-%d %A %H:%M>"))
+    #+END_SRC/
 
 ** Markdown
 
-#+begin_src emacs-lisp
- (autoload 'markdown-mode "markdown-mode"
-       "Major mode for editing Markdown files" t)
-    (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-    (add-to-list 'auto-mode-alist '("\\.mkd\\'" . markdown-mode))
-    (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-#+end_src
+   #+begin_src emacs-lisp
+     (autoload 'markdown-mode "markdown-mode"
+           "Major mode for editing Markdown files" t)
+        (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+        (add-to-list 'auto-mode-alist '("\\.mkd\\'" . markdown-mode))
+        (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+   #+end_src
 
 ** smex
 
    一个让在Emacs中输入命令行也能够自动完成的插件，是一个在minibuffer中的ido
 
-#+BEGIN_SRC emacs-lisp
-;(require 'smex) ;not needed by using package.el
-(smex-initialize)
+   #+BEGIN_SRC emacs-lisp
+     ;(require 'smex) ;not needed by using package.el
+     (smex-initialize)
 
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+     (global-set-key (kbd "M-x") 'smex)
+     (global-set-key (kbd "M-X") 'smex-major-mode-commands)
+     ;; This is your old M-x.
+     (global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+   #+END_SRC
+
+** qGPG
+
+   在Emacs中使用加密工具GPG。同时配置Emacs使用minibuffer接收加密文档的密码。
+
+   * 使用对称加密方式（symmetric）： See : epa-file-encrypt-to
+   * 当启动加密时直接询问密码，不使用选单方式询问密码 See : epa-file-select-keys
+   * 在Emacs当前Session中记录用户输入的密码  See: epa-file-cache-passphrase-for-symmetric-encryption
+
+   #+BEGIN_SRC emacs-lisp
+     (require 'epa-file)
+     (epa-file-enable)
+     (setq epa-file-encrypt-to nil)
+     ;(setq epa-file-select-keys 0)
+     (setq epa-file-cache-passphrase-for-symmetric-encryption t)
+     (setenv (concat "GPG_AGENT_INFO" nil))
+   #+END_SRC
+
+   #+RESULTS:
+
+** Deft
+
+Deft是Emacs下一个快速浏览，检索文本文件的Major Mode。我使用它来管理我的Org文件列表。看看是否足够好用。
+
+感觉只能实现一些文本文件的索引功能，使用的地方还是比较少。现在不再使用了。
+
+#+BEGIN_SRC
+;(require 'deft) ;not needed by using package.el
+
+(setq deft-extension "org")
+(setq deft-text-mode 'org-mode)
+(setq deft-directory "D:/0--WORK/1--新业务开发/0--ProjectDocuments")
+
+;setting key binddings
+(global-set-key [f8] 'deft)
+
 #+END_SRC
+
 
 * 附录
 
