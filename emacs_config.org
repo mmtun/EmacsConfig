@@ -323,7 +323,7 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
       (define-key global-map "\C-cc" 'org-capture)
       (setq org-capture-templates
             '(("b" "Journal(b)" entry (file+datetree "~/Journal/2015-BodyDiary.org.gpg")
-               "* %?\n输入于：%U\n %i\n")
+               "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n %i\n")
               ("t" "Taiji(t)" entry (file+datetree "~/Journal/2015-TaijiTraining.org.gpg")
                "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n\n")))
     #+END_SRC
