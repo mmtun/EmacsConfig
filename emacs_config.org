@@ -217,28 +217,28 @@ If set/leave chinese-font-size to nil, it will follow english-font-size"
      #+END_SRC
 *** Eamcs界面元素显示状态
 
-Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
-#+begin_src emacs-lisp
-(when (string-equal system-type "windows-nt")
-  "在Windows环境中关闭菜单条"
-  (menu-bar-mode -1))
-;; 关闭工具条
-(tool-bar-mode -1)
-;; 关闭滚动条
-;;(scroll-bar-mode -1)
-;; 设置MiniBuffer的最小高度
-(setq resize-mini-window nil )
-#+end_src
+    Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
+    #+begin_src emacs-lisp
+      (when (string-equal system-type "windows-nt")
+	"在Windows环境中关闭菜单条"
+	(menu-bar-mode -1))
+      ;; 关闭工具条
+      (tool-bar-mode -1)
+      ;; 关闭滚动条
+      ;;(scroll-bar-mode -1)
+      ;; 设置MiniBuffer的最小高度
+      (setq resize-mini-window nil )
+    #+end_src
 
-启动时显示启动信息没有用，关闭之。
-#+begin_src emacs-lisp
-(setq inhibit-startup-screen t)
-(setq inhibit-startup-message t)
+    启动时显示启动信息没有用，关闭之。
+    #+begin_src emacs-lisp
+      (setq inhibit-startup-screen t)
+      (setq inhibit-startup-message t)
 
-;;如果安装了fill-column-indicator扩展，则默认激活
-(unless (package-installed-p "fill-column-indicator")
-  (add-hook 'python-mode-hook 'fci-mode))
-#+end_src
+      ;;如果安装了fill-column-indicator扩展，则默认激活
+      (unless (package-installed-p "fill-column-indicator")
+	(add-hook 'python-mode-hook 'fci-mode))
+    #+end_src
 
 *** Theme 设置
 
@@ -318,16 +318,16 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
     #+END_SRC
 
 *** 配置Capture模板
-    设置OrgMode的Capture模板。这样可以
+    设置OrgMode的Capture模板。这样可以从Emacs的任何角落打开Capture界面将零散的信息统一记录到一个地方。
+
     #+BEGIN_SRC emacs-lisp
       (define-key global-map "\C-cc" 'org-capture)
       (setq org-capture-templates
             '(("b" "Journal(b)" entry (file+datetree "~/Journal/2015-BodyDiary.org.gpg")
-               "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n %i\n")
+               "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n %i\n" :kill-buffer t :empty-lines 1)
               ("t" "Taiji(t)" entry (file+datetree "~/Journal/2015-TaijiTraining.org.gpg")
-               "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n\n")))
+               "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n\n" :kill-buffer t :empty-lines 1)))
     #+END_SRC
-
 *** 调整时间戳显示方式（已放弃）
 
     找到了在模板中配置日期显示方式的方法，一下的HACK的方法不再使用。
