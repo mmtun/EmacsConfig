@@ -15,6 +15,12 @@
 #+end_src
 
 * Emacs通用设置
+
+** 设置lisp加载目录
+
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'load-path "~/.emacs.d/lisp")
+   #+END_SRC
 ** 编辑器默认行为设置
 
    设置Eamcs在各种编辑场景下都需要激活的特性。具体包括：
@@ -42,7 +48,7 @@
 ** Emacs外观设置
 *** 字体设置
 
-Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使用中文和英文混排时表格可以对齐，需要对Emacs中的字体进行相应的设置。
+    Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使用中文和英文混排时表格可以对齐，需要对Emacs中的字体进行相应的设置。
 
 **** 等宽字体设置
 
@@ -272,7 +278,6 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
 #+END_SRC
 
 * Pacakge 配置
-
 ** EVIL （FREEZED）
 
    *暂时被停用*
@@ -320,18 +325,23 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
             '(("b" "Journal(b)" entry (file+datetree "~/Journal/2015-BodyDiary.org.gpg")
                "* %?\n输入于：%U\n %i\n")
               ("t" "Taiji(t)" entry (file+datetree "~/Journal/2015-TaijiTraining.org.gpg")
-               "* %?\n输入于：%U\n %i\n")))
+               "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n\n")))
     #+END_SRC
 
-*** 调整时间戳显示方式
-    在Ubuntu下默认的星期名仅显示一个中文的数字，我不喜欢。所以改动了Orgmode相应变量。由于这个常量并未开放给用户自定义使用，因此可能会于Orgmode的版本相关。目前看来，问题应该不大。相关变量的说明可以看Eamcs的变量手册 =describe-variable RET org-time-stamp-formats RET=
+*** 调整时间戳显示方式（已放弃）
 
-    修改前：显示的时间戳为：<2015-04-30 四>
-    修改后：显示的时间戳为：<2015-04-30 星期四>
+    找到了在模板中配置日期显示方式的方法，一下的HACK的方法不再使用。
 
-    #+BEGIN_SRC emacs-lisp
-      (setq org-time-stamp-formats '("<%Y-%m-%d %A>" . "<%Y-%m-%d %A %H:%M>"))
-    #+END_SRC/
+    #+BEGIN_QUOTE
+      在Ubuntu下默认的星期名仅显示一个中文的数字，我不喜欢。所以改动了Orgmode相应变量。由于这个常量并未开放给用户自定义使用，因此可能会于Orgmode的版本相关。目前看来，问题应该不大。相关变量的说明可以看Eamcs的变量手册 =describe-variable RET org-time-stamp-formats RET=
+
+      修改前：显示的时间戳为：<2015-04-30 四>
+      修改后：显示的时间戳为：<2015-04-30 星期四>
+
+      #+BEGIN_SRC emacs-lisp
+        (setq org-time-stamp-formats '("<%Y-%m-%d %A>" . "<%Y-%m-%d %A %H:%M>"))
+      #+END_SRC/
+    #+END_QUOTE
 
 ** Markdown
 
@@ -376,6 +386,13 @@ Eamcs运行时我不想让工具条和菜单条显示出来，所以关掉。
 
    #+RESULTS:
 
+** TaskJuggler
+
+   TaskJugger是一个开源的项目管理工具。以文本文件的方式存储各项任务、资源、成本等部分内容的设定。
+
+   #+BEGIN_SRC emacs-lisp
+     (require 'taskjuggler-mode )
+   #+END_SRC
 * 附录
 
 [fn:1] http://baohaojun.github.io/blog/2012/12/19/perfect-emacs-chinese-font.html
