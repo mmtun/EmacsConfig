@@ -89,22 +89,23 @@
 | 使用等高字体setting | 成功的解决了字体的缩放和表格对齐的问题 |
 
 #+begin_src emacs-lisp
-(case system-type
-  (gnu/linux
-   (set-face-bold-p 'bold nil)
-   (set-face-underline-p 'bold nil)
-   (set-font "monofur" "WenQuanyi Micro Hei Mono" 16 16)
-  )
-  ( windows-nt
+  (case system-type
+    (gnu/linux
+     (set-face-bold-p 'bold nil)
+     (set-face-underline-p 'bold nil)
+     ;(set-font "monofur" "WenQuanyi Micro Hei Mono" 16 16)
+     (set-font "monofur" "Droid Sans Fallback" 16 16)
+    )
+    ( windows-nt
 
-     (set-font "Consolas" "Microsoft Yahei" 14 14)
-     ;(set-face-attribute 'default nil :font "Consolas-14") 
-     ;(dolist (charset '(kana han symbol cjk-misc bopomofo))
-     ;    (set-fontset-font  (frame-parameter nil 'font) charset
-     ;                 (font-spec :family "Microsoft Yahei")))
-     ;(setq face-font-rescale-alist '("Microsoft Yahei" . 1.2))
+       (set-font "Consolas" "Microsoft Yahei" 14 14)
+       ;(set-face-attribute 'default nil :font "Consolas-14") 
+       ;(dolist (charset '(kana han symbol cjk-misc bopomofo))
+       ;    (set-fontset-font  (frame-parameter nil 'font) charset
+       ;                 (font-spec :family "Microsoft Yahei")))
+       ;(setq face-font-rescale-alist '("Microsoft Yahei" . 1.2))
+    )
   )
-)
 #+end_src
 
 **** 等高字体的设置
@@ -325,23 +326,23 @@
       (setq org-capture-templates
             '(("b" "Journal(b)" entry (file+datetree "~/Journal/2015-BodyDiary.org.gpg")
                "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n %i\n" :kill-buffer t :empty-lines 1)
-              ("t" "Taiji(t)" entry (file+datetree "~/Journal/2015-TaijiTraining.org.gpg")
+              ("t" "太极拳(t)" entry (file+datetree "~/Journal/2015-TaijiTraining.org.gpg")
+               "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n\n" :kill-buffer t :empty-lines 1)
+              ("l" "流水帐" entry (file+datetree "~/Journal/2015-lxz-流水帐.org")
                "* %?\n输入于：%<%Y-%m-%d %A %H:%M>\n\n" :kill-buffer t :empty-lines 1)))
     #+END_SRC
 *** 调整时间戳显示方式（已放弃）
 
     找到了在模板中配置日期显示方式的方法，一下的HACK的方法不再使用。
 
-    #+BEGIN_QUOTE
-      在Ubuntu下默认的星期名仅显示一个中文的数字，我不喜欢。所以改动了Orgmode相应变量。由于这个常量并未开放给用户自定义使用，因此可能会于Orgmode的版本相关。目前看来，问题应该不大。相关变量的说明可以看Eamcs的变量手册 =describe-variable RET org-time-stamp-formats RET=
+    在Ubuntu下默认的星期名仅显示一个中文的数字，我不喜欢。所以改动了Orgmode相应变量。由于这个常量并未开放给用户自定义使用，因此可能会于Orgmode的版本相关。目前看来，问题应该不大。相关变量的说明可以看Eamcs的变量手册 =describe-variable RET org-time-stamp-formats RET=
 
-      修改前：显示的时间戳为：<2015-04-30 四>
-      修改后：显示的时间戳为：<2015-04-30 星期四>
+    修改前：显示的时间戳为：<2015-04-30 四>
+    修改后：显示的时间戳为：<2015-04-30 星期四>
 
-      #+BEGIN_SRC emacs-lisp
-        (setq org-time-stamp-formats '("<%Y-%m-%d %A>" . "<%Y-%m-%d %A %H:%M>"))
-      #+END_SRC/
-    #+END_QUOTE
+    #+BEGIN_SRC emacs-lisp
+      (setq org-time-stamp-formats '("<%Y-%m-%d %A>" . "<%Y-%m-%d %A %H:%M>"))
+    #+END_SRC
 
 ** Markdown
 
@@ -389,6 +390,7 @@
 ** TaskJuggler
 
    TaskJugger是一个开源的项目管理工具。以文本文件的方式存储各项任务、资源、成本等部分内容的设定。
+   目前正在尝试使用TaskJuggler来管理我的日常工作项目
 
    #+BEGIN_SRC emacs-lisp
      (require 'taskjuggler-mode )
