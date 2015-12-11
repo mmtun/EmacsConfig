@@ -5,6 +5,8 @@
 * Emacs的组件
 ** 添加package源
 
+   为Emacs添加必要的组件。
+
    #+begin_src emacs-lisp
      (require 'package)
      (add-to-list 'package-archives 
@@ -12,7 +14,29 @@
      (add-to-list 'package-archives 
                   '("org" . "http://orgmode.org/elpa/"))
      (package-initialize)
+     (when (not package-archive-contents)
+       (package-refresh-contents))
    #+end_src
+
+   定义组件内容
+
+   #+BEGIN_SRC emacs-lisp
+     (defvar myPackages
+       '(elpy
+         flycheck
+         py-autopep8
+         aurora-theme
+         smex))
+   #+END_SRC
+
+   安装组件
+  
+   #+BEGIN_SRC emacs-lisp
+     (mapc #'(lambda (package)
+               (unless (package-installed-p package)
+                 (package-install package)))
+           myPackages)
+   #+END_SRC
 
 * Emacs通用设置
 
@@ -247,8 +271,9 @@
 
 #+begin_src emacs-lisp
 ;(when window-system (load-theme 'molokai t))
-(load-theme 'flatui t)
+;(load-theme 'flatui t)
 ;(load-theme 'leuven t)
+(load-theme 'aurora t)
 
 #+end_src
 
@@ -256,19 +281,25 @@
 #+begin_src emacs-lisp
 (setq custom-safe-themes t)
 #+end_src
+
+** Emacs Server
+   
+   #+BEGIN_SRC emacs-lisp
+        (server-start)
+   #+END_SRC
 * Emacs编辑功能设置
 ** 文件编码
 
    设置Emacs的默认编码集。考虑到跨操作系统使用Emacs配置文件的需求，使用utf-8作为主要文件编码。
 
    #+begin_src emacs-lisp
-     (case system-type
-       (windows-nt
-        (prefer-coding-system 'utf-8)
-        (setq file-name-coding-system 'gbk))
-       (gnu/linux
-        (prefer-coding-system 'utf-8))
-     )
+         (case system-type
+           (windows-nt
+            (prefer-coding-system 'utf-8)
+            (setq file-name-coding-system 'gbk) )
+           (gnu/linux
+            (prefer-coding-system 'utf-8))
+         )
    #+end_src
 
    设置一些必要的快捷键绑定：
@@ -404,6 +435,48 @@
      (require 'git-gutter-fringe)
      (global-git-gutter-mode t)
    #+END_SRC
+
+** deft
+
+   #+BEGIN_SRC emacs-lisp
+     (require 'deft)
+     (setq deft-directory "~/Writing")
+     (setq deft-recursive t)
+     (setq deft-extension "org")
+     (setq deft-text-mode 'org-mode)
+     (setq deft-use-filename-as-title t)
+     (setq deft-use-filter-string-for-filename t)
+                                             ;设置deft快捷键
+     (global-set-key (kbd "C-c d") 'deft)
+   #+END_SRC
+
+** better-default
+
+   让Emacs的默认参数更加合理（是这个Package说的，好像我也没有啥特别的感觉），先激活再说吧。
+
+** Python编辑功能配置
+
+   使用flycheck需要有一些额外的程序支持：
+
+   * pip install jedi
+   * pip install autopep8
+   * pip install pyflakes
+   * pip install ipython
+   * pip install pyreadline
+
+   此外，还需要在命令行可以使用diff程序。好在咱们装了git，在windows下提供了一个diff工具。配置PATH环境变量吧：）
+
+   #+BEGIN_SRC emacs-lisp
+     (elpy-enable)
+
+     (when (require 'flycheck nil t)
+       (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+       (add-hook 'elpy-mode-hook 'flycheck-mode))
+
+     (require 'py-autopep8)
+     (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+   #+END_SRC
+
 
 * 附录
 
