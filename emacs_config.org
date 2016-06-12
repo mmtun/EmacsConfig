@@ -67,6 +67,8 @@
 
      ;; 高亮光标的当前行
      (global-hl-line-mode 1)
+
+     (require 'cl)
    #+end_src
 
 ** Emacs外观设置
@@ -74,12 +76,14 @@
 
     Emacs的界面可以进行大量的定制化设置。为了保证在Emacs中使用中文和英文混排时表格可以对齐，需要对Emacs中的字体进行相应的设置。
 
+    目前使用chinese-fonts-setup来管理我的字体，所以，这里的自定义部分可以取消了。
+
 **** 等宽字体设置
 
      set-font函数是设置等宽字体的函数。（但是不等高）
 
      定义字体设置函数。
-     #+begin_src emacs-lisp
+     #+begin_src 
        (require 'cl)
 
        (defun set-font (english chinese english-size chinese-size)
@@ -112,7 +116,7 @@
 | English             | 不是所有的页面都可以这样               |
 | 使用等高字体setting | 成功的解决了字体的缩放和表格对齐的问题 |
 
-#+begin_src emacs-lisp
+
   (case system-type
     (gnu/linux
      (set-face-bold-p 'bold nil)
@@ -130,7 +134,7 @@
        ;(setq face-font-rescale-alist '("Microsoft Yahei" . 1.2))
     )
   )
-#+end_src
+
 
 **** 等高字体的设置
 
@@ -275,6 +279,8 @@
 ;(load-theme 'leuven t)
 (load-theme 'aurora t)
 ;(load-theme 'darktooth t)
+;(load-theme 'monokai t)
+;(load-theme 'spacemacs-dark)
 
 #+end_src
 
@@ -282,7 +288,7 @@
 #+begin_src emacs-lisp
 (setq custom-safe-themes t)
 #+end_src
-
+    
 ** Emacs Server
    
    #+BEGIN_SRC emacs-lisp
@@ -376,7 +382,11 @@
     #+BEGIN_SRC emacs-lisp
       (setq org-time-stamp-formats '("<%Y-%m-%d %A>" . "<%Y-%m-%d %A %H:%M>"))
     #+END_SRC
+*** 配置org文件输出格式
 
+    #+BEGIN_SRC emacs-lisp
+      (setq org-export-backends (quote (ascii html icalendar latex md)))    
+    #+END_SRC
 ** Markdown
 
    #+begin_src emacs-lisp
@@ -483,10 +493,20 @@
 
    Vim的powerline让Vim看起来更加的“时尚”。Emacs的粉丝们也提供了相应的版本。我这里启用的是milkypostman写的。多谢作者！
 
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC
      (require 'powerline)
-     (setq powerline-default-separator 'arrow-fade)
+     (setq powerline-default-separator 'wave)
      (powerline-default-theme)
+   #+END_SRC
+
+** spaceline
+
+   从Spacemacs中独立出来的Mode-line。依赖Powerline。据说效果比Powerline更好。用用看
+
+   #+BEGIN_SRC emacs-lisp
+     (require 'spaceline-config)
+     (setq powerline-default-separator 'wave)
+     (spaceline-spacemacs-theme)
    #+END_SRC
 
 ** nlinum
@@ -494,6 +514,27 @@
    用于替代内置的linum-mode的一个行号显示插件。重点改进了内置应用的效率问题。使得在处理“巨大”的org-mode文档的时候，效率不再是问题。
 
    这个插件没有特别需要自定义的。
+
+** chinese-fonts-setup
+
+   `chinese-fonts-setup`是一个emacs的中文字体配置工具，用以方便的实现中文字体和英文字体的等宽（即，在org-mode中实现表格对齐）。这个package特别适用于需要处理中英文混合表格的中文org-mode用户。
+
+   #+BEGIN_SRC emacs-lisp
+     (require 'chinese-fonts-setup)   
+     (setq cfs-profiles
+            '("program" "org-mode" "read-book")) 
+   #+END_SRC
+
+** key-chord
+
+   使用键盘并机，实现Emacs操作的简化。
+
+   #+BEGIN_SRC emacs-lisp
+     (require 'key-chord)
+     (key-chord-mode 1)
+
+     (key-chord-define-global "jk" 'kill-buffer)
+   #+END_SRC
 * 附录
 
 [fn:1] http://baohaojun.github.io/blog/2012/12/19/perfect-emacs-chinese-font.html
