@@ -425,7 +425,8 @@
      (setq epa-file-encrypt-to nil)
      ;(setq epa-file-select-keys 0)
      (setq epa-file-cache-passphrase-for-symmetric-encryption t)
-     (setenv (concat "GPG_AGENT_INFO" nil))
+     ;(setenv (concat "GPG_AGENT_INFO" nil))
+     (setenv  "GPG_AGENT_INFO" nil)
    #+END_SRC
 
    #+RESULTS:
@@ -534,6 +535,12 @@
      (key-chord-mode 1)
 
      (key-chord-define-global "jk" 'kill-buffer)
+   #+END_SRC
+
+** vbs mode
+
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.vbs\\'" . text-mode))
    #+END_SRC
 * 附录
 
