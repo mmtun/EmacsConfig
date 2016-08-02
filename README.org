@@ -1,0 +1,20 @@
+#+TITLE: Emacs配置文件项目说明
+#+DATE: <2016-08-02 星期二>
+
+* 说明
+
+  这里是我使用LP（文学编程）方式管理的Emacs启动配置文件。
+
+* 使用方式：
+
+  * init.el
+    
+    启动配置文件，自动编译emacs-config.org文件并加载执行其中的代码
+
+  * emacs-config.org
+
+    配置文件
+
+  * site-start.el
+
+    使Emacs脱离Windows环境变量的控制，可以绿色的方式执行。
